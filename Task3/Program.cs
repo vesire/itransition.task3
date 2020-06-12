@@ -13,7 +13,6 @@ namespace Task3
             Random rnd = new Random();
             int pcMove = rnd.Next(args.Length);
             Console.WriteLine(pcMove);
-            bool isInt = false;
             int myMove;
             do
             {
