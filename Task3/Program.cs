@@ -5,37 +5,43 @@ using System.Text;
 namespace Task3
 {
     class Program
-    {
-        
+    {        
         static void Main(string[] args)
         {
             if (!CheckArgs(args))
+            {
+                Console.ReadKey();
                 return;
-            Computer pc = new Computer(args);
-            byte[] pcMoveHMAC = pc.CalculateHMAC();
-            Console.WriteLine(String.Format("HMAC: {0}", HashEncode(pcMoveHMAC)));
-            Player player = new Player(args);
-            ShowResults(player, pc, (args.Length - 1) / 2);
-            Console.WriteLine(String.Format("HMAC key: {0}", HashEncode(pc.key)));
+            }
+            Computer pc = new Computer();
+            Player player = new Player();
+            while (true)
+            {
+                pc.Move(args);
+                Console.WriteLine(String.Format("HMAC: {0}", HashEncode(pc.HMAC)));
+                player.Move(args);
+                if (player.ExitCondition())
+                    break;
+                ShowResults(player, pc, (args.Length - 1) / 2);
+                Console.WriteLine(String.Format("HMAC key: {0}", HashEncode(pc.key)));
+                Console.WriteLine();
+            }
         }
-        private static void ShowResults(Player player, Computer pc, int numberOfWinningMoves)
+        private static void ShowResults(Player player, Computer pc, int winningMoves)
         {
             Console.WriteLine(String.Format("Your move: {0}", player.playerMoveString));
             Console.WriteLine(String.Format("Computer move: {0}", pc.pcMoveString));
             if (player.playerMoveInt == pc.pcMoveInt)
                 Console.WriteLine("Draw!");
             else
-                Console.WriteLine(String.Format("{0} win!", WinnerDecider(player.playerMoveInt, pc.pcMoveInt, numberOfWinningMoves)));
+                Console.WriteLine(String.Format("{0} win!", WinnerDecider(player.playerMoveInt, pc.pcMoveInt, winningMoves)));
         }
-        private static string WinnerDecider(int myMove, int pcMove, int numberOfWinningMoves)
+        private static string WinnerDecider(int myMove, int pcMove, int winningMoves)
         {
-            string winner;
             int moveDifference = myMove - pcMove;
-            if ((moveDifference < (-numberOfWinningMoves)) || (moveDifference > 0 && moveDifference <= numberOfWinningMoves))
-                winner = "You";
-            else
-                winner = "Computer";
-            return winner;
+            if ((moveDifference < (-winningMoves)) || (moveDifference > 0 && moveDifference <= winningMoves))
+                return "You";
+            return "Computer";
         }
         private static string HashEncode(byte[] hash)
         {

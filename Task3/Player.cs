@@ -4,19 +4,26 @@ using System.Text;
 
 namespace Task3
 {
-    class Player
+    public class Player
     {
-        public int playerMoveInt;
-        public string playerMoveString;
-        public Player(string[] args)
+        public int playerMoveInt { get; private set; }
+        public string playerMoveString { get; private set; }
+        public void Move(string[] args)
         {
             int move;
             do
             {
                 ShowMenu(args);
-            } while (!int.TryParse(Console.ReadLine(), out move) || (move < 1 || move > args.Length));
+            } while (!int.TryParse(Console.ReadLine(), out move) || (move < 0 || move > args.Length));
             playerMoveInt = move - 1;
-            playerMoveString = args[playerMoveInt];
+            if(!ExitCondition())
+                playerMoveString = args[playerMoveInt];
+        }
+        public bool ExitCondition()
+        {
+            if (playerMoveInt == -1)
+                return true;
+            return false;
         }
         private static void ShowMenu(string[] args)
         {
